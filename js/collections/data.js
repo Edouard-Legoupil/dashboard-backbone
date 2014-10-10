@@ -4,7 +4,7 @@ var app = app || {};
 (function () {
   'use strict';
 
-  // Doses Collection
+  // Data Collection
   // ---------------
 
   var DataList = Backbone.Collection.extend({
@@ -16,36 +16,40 @@ var app = app || {};
     initialize: function () {
       //app.data.fetch({reset: true});
       this.data = null;
-      this.on('reset', this.prepare);
+      this.on('reset', this._prepare);
     },
 
-    prepare: function () {
-      var dateFormat = d3.time.format('%d/%m/%Y');
+    _prepare: function () {
       this.data = this.toJSON();
+      this._coerce();
+      this._crossfilterSetup();
+      this.trigger('dataReady'); // can start now rendering
+    },
 
-      // A bit of coerce
+    _coerce: function (d) {
+      this.dateFormat = d3.time.format('%d/%m/%Y');
+      var that = this;
       this.data.forEach(function(d, i) {
           d.index = i;
-          d.date = dateFormat.parse(d.date);
+          d.date = that.dateFormat.parse(d.date);
           d.dose_rate = +d.dose_rate;
           d.lat = +d.lat;
           d.lon = +d.lon;
       });
-
-      this.trigger('dataReady'); // can start now rendering
     },
 
-    total: function() {
-      return this.length;
-    },    
+    _crossfilterSetup: function () {
+      var cf = crossfilter(this.data);
 
-    getData : function() {
-      return this.toJSON();
+      this.dimTime = cf.dimension(function(d) {
+        return d3.time.week(d.date);});
+      this.grpTime = this.dimTime.group().reduceCount();
+      this.histTime = cf.dimension(function(d) {return d.dose_rate;});
+      this.grpTime = this.histTime.group(function(d) { return Math.floor(d);});
     }
 
   });
 
-  // Create our global collection of **Doses**.
   app.dataList = new DataList();
 
 })();

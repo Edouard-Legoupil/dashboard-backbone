@@ -4,7 +4,6 @@ var app = app || {};
 (function ($) {
   'use strict';
 
-
   app.AppView = Backbone.View.extend({
 
     el: '#dashboard',
@@ -18,14 +17,10 @@ var app = app || {};
     },
 
     render: function () {
-      console.log(app.dataList.data);
-
       var timeView = new app.TimeView({parent: this, model: new app.TimeModel});
-
-
-      //var histoView = new app.HistoView();
-      //var mapView = new app.MapView();
-      //var tableView = new app.TableView();
+      //var histView = new app.HistView({parent: this, model: new app.TimeModel});
+      //var mapView = new app.MapView({parent: this, model: new app.TimeModel});
+      //var tableView = new app.tableView({parent: this, model: new app.TimeModel});
 
       //return this; 
     }

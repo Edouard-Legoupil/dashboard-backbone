@@ -12,15 +12,6 @@ var app = app || {};
         },
 
         initialize: function () {
-            //this.on("change:reset", 
-            //  function(){ console.log('reset changed'); }
-            //);
-
-            //this.resetTimeModel = new ResetTimeModel();
-            //this.resetTimeModel.parent = this;
-
-            //this.presetsTimeModel = new PresetsTimeModel();
-            //this.presetsTimeModel.parent = this;       
         }
     });
 })();
