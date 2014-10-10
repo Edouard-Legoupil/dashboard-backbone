@@ -13,11 +13,13 @@ var app = app || {};
       //this.timeView = new app.TimeView();
       //this.timeView.parent = this;
 
-      this.listenTo(app.doses, 'reset', this.render);
-      app.doses.fetch({reset: true});
+      app.dataList.fetch({reset: true});
+      this.listenTo(app.dataList, 'dataReady', this.render);
     },
 
     render: function () {
+      console.log(app.dataList.data);
+
       var timeView = new app.TimeView({parent: this, model: new app.TimeModel});
 
 

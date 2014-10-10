@@ -18,6 +18,7 @@ var app = app || {};
       this.parent = options.parent;
       var resetTimeView = new app.ResetTimeView({parent: this});
       var presetsTimeView = new app.PresetsTimeView({parent: this});
+      var chartTimeView = new app.ChartTimeView({parent: this});
 
     },
 
