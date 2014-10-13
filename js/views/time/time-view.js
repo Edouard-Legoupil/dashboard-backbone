@@ -1,4 +1,3 @@
-/*global Backbone, jQuery, _, ENTER_KEY */
 var app = app || {};
 
 (function ($) {
@@ -19,7 +18,6 @@ var app = app || {};
       var resetTimeView = new app.ResetTimeView({parent: this});
       var presetsTimeView = new app.PresetsTimeView({parent: this});
       var chartTimeView = new app.ChartTimeView({parent: this});
-
     },
 
     render: function () {

@@ -2,16 +2,26 @@
 var app = app || {};
 
 (function () {
-    'use strict';
+  'use strict';
 
-    app.TimeModel = Backbone.Model.extend({
-        defaults: {
-          reset: false,
-          preset: true,
-          brushExtent: null
-        },
+  app.TimeModel = Backbone.Model.extend({
+    defaults: {
+      reset: false,
+      preset: true,
+      brushExtent: null
+    },
 
-        initialize: function () {
-        }
-    });
+    initialize: function () {
+      this.on('change:brushExtent', this.synchronize); 
+
+    },
+
+    synchronize: function () {
+      // Filter crossfilter associated dimension
+      app.dataList.timeDim.filter(this.get('brushExtent'));
+
+      // Dispatch event to event aggregator
+      Backbone.trigger('chart:sync');
+    }
+  });
 })();

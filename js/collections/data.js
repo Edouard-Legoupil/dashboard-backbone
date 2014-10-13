@@ -23,7 +23,8 @@ var app = app || {};
       this.data = this.toJSON();
       this._coerce();
       this._crossfilterSetup();
-      this.trigger('dataReady'); // can start now rendering
+      // Can start now rendering
+      this.trigger('dataReady');
     },
 
     _coerce: function (d) {
@@ -41,11 +42,11 @@ var app = app || {};
     _crossfilterSetup: function () {
       var cf = crossfilter(this.data);
 
-      this.dimTime = cf.dimension(function(d) {
+      this.timeDim = cf.dimension(function(d) {
         return d3.time.week(d.date);});
-      this.grpTime = this.dimTime.group().reduceCount();
-      this.histTime = cf.dimension(function(d) {return d.dose_rate;});
-      this.grpTime = this.histTime.group(function(d) { return Math.floor(d);});
+      this.timeGrp = this.timeDim.group().reduceCount();
+      this.histDim = cf.dimension(function(d) {return d.dose_rate;});
+      this.histGrp = this.histDim.group(function(d) { return Math.floor(d);});
     }
 
   });

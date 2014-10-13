@@ -4,8 +4,6 @@
 rdn.barchart = function() {};
 rdn.histogram = function() {};
 
-
-
 // Geospatial-related visualizations
 rdn.geo = {};
 rdn.geo.hexbin = function() {};
@@ -22,7 +20,8 @@ rdn.timeSeries.bars = function() {
       margin = {top: 10, right: 25, bottom: 30, left: 20},
       x = null,
       y = null,
-      dimension = null,
+      brush = d3.svg.brush(),
+      //dimension = null,
       group = null,
       prettyDate = d3.time.format("%d/%m/%Y %H:%M"),
       xAxis = d3.svg.axis().orient("bottom"), 
@@ -32,7 +31,6 @@ rdn.timeSeries.bars = function() {
 
   var _width,
       _height,
-      _brush = d3.svg.brush(),
       _filterSet = false,
       _brushDirty,
       _round;
@@ -47,10 +45,10 @@ rdn.timeSeries.bars = function() {
       if (g.empty()) init();
 
       // If brush set from outside
-      if (_filterSet) {
+      /*if (_filterSet) {
         _brush.extent(filter);
         _brush.event(d3.select("g.brush"));
-      } 
+      } */
 
       // Draw bars svg path
       g.selectAll(".bar").attr("d", barPath);
@@ -58,7 +56,7 @@ rdn.timeSeries.bars = function() {
       function init(){
         _width = x.range()[1];
         _height = y.range()[1];
-        _brush.x(x);
+        brush.x(x);
         xAxis.scale(x);
         yAxis.scale(y);
 
@@ -93,7 +91,7 @@ rdn.timeSeries.bars = function() {
                     .call(yAxis);
 
         if (hasBrush) {
-          var gBrush = g.append("g").attr("class", "brush").call(_brush);
+          var gBrush = g.append("g").attr("class", "brush").call(brush);
           gBrush.selectAll("rect").attr("height", _height);
         }
       }
@@ -101,14 +99,14 @@ rdn.timeSeries.bars = function() {
       // Only redraw the brush if set externally.
       if (_brushDirty) {
         _brushDirty = false;
-        g.selectAll(".brush").call(_brush);
+        g.selectAll(".brush").call(brush);
         //div.select(".title a").style("display", _brush.empty() ? "none" : null);
-        if (_brush.empty()) {
+        if (brush.empty()) {
           g.selectAll("#clip-" + id + " rect")
               .attr("x", 0)
               .attr("width", _width);
         } else {
-          var extent = _brush.extent();
+          var extent = brush.extent();
           g.selectAll("#clip-" + id + " rect")
               .attr("x", x(extent[0]))
               .attr("width", x(extent[1]) - x(extent[0]));
@@ -129,21 +127,21 @@ rdn.timeSeries.bars = function() {
     }
   }
 
-  _brush.on("brushstart.chart", function() {
+  brush.on("brushstart.chart", function() {
       //d3.select("#time-series-preset").selectAll('dd').classed('active', false);
   });
 
-  _brush.on("brush.chart", function() {
+  brush.on("brush.chart", function() {
     var g = d3.select(this.parentNode),
-        extent = _brush.extent();
+        extent = brush.extent();
     if (_round) g.select(".brush")
-        .call(_brush.extent(extent = extent.map(_round)))
+        .call(brush.extent(extent = extent.map(_round)))
       .selectAll(".resize")
         .style("display", null);
     g.select("#clip-" + id + " rect")
         .attr("x", x(extent[0]))
         .attr("width", x(extent[1]) - x(extent[0]));
-    dimension.filterRange(extent);
+    //dimension.filterRange(extent);
     filterSet = false; // to be tested in synchronous mode -- should prevent resetting 
                    // default filter if manual brush took place meanwhile and
                    // other graph is filtered
@@ -152,11 +150,11 @@ rdn.timeSeries.bars = function() {
     //$('#time-series-reset').css('visibility', 'visible'); 
   });
 
-  _brush.on("brushend.chart", function() {
-    if (_brush.empty()) {
+  brush.on("brushend.chart", function() {
+    if (brush.empty()) {
       var div = d3.select(this.parentNode.parentNode.parentNode);
       div.select("#clip-" + id + " rect").attr("x", null).attr("width", "100%");
-      dimension.filterAll();
+      //dimension.filterAll();
       //$('#time-series-reset').removeClass('active'); 
       //$('#time-series-reset').css('visibility', 'hidden'); 
     }
@@ -193,11 +191,11 @@ rdn.timeSeries.bars = function() {
     yAxis = _;
     return chart;
   };
-  chart.dimension = function(_) {
+  /*chart.dimension = function(_) {
     if (!arguments.length) return dimension;
     dimension = _;
     return chart;
-  };
+  };*/
   chart.group = function(_) {
     if (!arguments.length) return group;
     group = _;
@@ -206,6 +204,11 @@ rdn.timeSeries.bars = function() {
   chart.prettyDate = function(_) {
     if (!arguments.length) return prettyDate;
     prettyDate = _;
+    return chart;
+  };
+  chart.brush = function(_) {
+    if (!arguments.length) return brush;
+    brush = _;
     return chart;
   };
   chart.filter = function(_) {
@@ -220,7 +223,7 @@ rdn.timeSeries.bars = function() {
     return chart;
   };
   
-  return d3.rebind(chart, _brush, "on");
+  return d3.rebind(chart, brush, "on");
 };
 
 rdn.timeSeries.boxplots = function() {};

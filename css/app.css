@@ -1,0 +1,26 @@
+ #time-subview #chart .axis text {
+        font: 10px sans-serif;
+    }
+#time-subview #chart .axis path,
+#time-subview #chart .axis line {
+    fill: none;
+    stroke: #555;
+    shape-rendering: crispEdges;
+}
+
+.brush rect.extent {
+    stroke: #eee;
+    fill-opacity: .125;
+    shape-rendering: crispEdges;
+}
+.brush .resize path {
+    fill: #eee;
+    stroke: #666;
+}
+
+.background.bar {
+    fill: #ddd;
+}
+.foreground.bar {
+    fill: steelblue;
+}

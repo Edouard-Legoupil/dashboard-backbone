@@ -17,10 +17,23 @@ var app = app || {};
     },
 
     render: function () {
-      var timeView = new app.TimeView({parent: this, model: new app.TimeModel});
-      //var histView = new app.HistView({parent: this, model: new app.TimeModel});
-      //var mapView = new app.MapView({parent: this, model: new app.TimeModel});
-      //var tableView = new app.tableView({parent: this, model: new app.TimeModel});
+      var timeView = new app.TimeView({
+        parent: this, 
+        model: new app.TimeModel}
+      );
+      
+      /*var histView = new app.HistView({
+        parent: this,
+        model: new app.TimeModel}
+      );
+      var mapView = new app.MapView({
+        parent: this, 
+        model: new app.TimeModel}
+      );
+      var tableView = new app.tableView({
+        parent: this,
+        model: new app.TimeModel}
+      );*/
 
       //return this; 
     }
