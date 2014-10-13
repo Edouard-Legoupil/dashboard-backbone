@@ -8,9 +8,15 @@ var app = app || {};
 
     el: '#time-subview',
 
+    presets: {
+      'preset1': [new Date(2011, 5, 1), new Date(2012, 1, 1)],
+      'preset2': [new Date(2011, 5, 1), new Date(2012, 1, 1)],
+      'preset3': [new Date(2011, 5, 1), new Date(2012, 1, 1)]
+    },
+
     events: {
-      "click #reset":  "cleared",
-      "click #preset": "preset"
+      'click #reset':  'cleared',
+      'click #presets': 'preset'
      },
 
     initialize: function (options) {
@@ -24,11 +30,11 @@ var app = app || {};
     },
 
     cleared: function () {
-      this.model.set({"reset": false, "preset": false});
+      this.model.set({'reset': false, 'preset': false, 'brushExtent': null});
     },
 
     preset: function () {
-      this.model.set({"reset": true, "preset": true});
+      this.model.set({'reset': true, 'preset': true});
     }
 
   });

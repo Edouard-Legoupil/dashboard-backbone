@@ -21,19 +21,15 @@ rdn.timeSeries.bars = function() {
       x = null,
       y = null,
       brush = d3.svg.brush(),
-      //dimension = null,
       group = null,
       prettyDate = d3.time.format("%d/%m/%Y %H:%M"),
       xAxis = d3.svg.axis().orient("bottom"), 
       yAxis = d3.svg.axis().orient("left"),
-      hasBrush = false,
-      filter = null;  // filter externally
+      hasBrush = false;
 
   var _width,
       _height,
-      _filterSet = false,
-      _brushDirty,
-      _round;
+      _brushExtentSet = false;
 
   function chart(div) {
 
@@ -44,11 +40,11 @@ rdn.timeSeries.bars = function() {
       // Create the skeleton chart.
       if (g.empty()) init();
 
-      // If brush set from outside
-      /*if (_filterSet) {
-        _brush.extent(filter);
-        _brush.event(d3.select("g.brush"));
-      } */
+      // If brush set programmatically
+      if (_brushExtentSet) {
+        brush.extent(brush.extent());
+        brush.event(d3.select("g.brush"));  // Trigger brush.on event
+      } 
 
       // Draw bars svg path
       g.selectAll(".bar").attr("d", barPath);
@@ -90,28 +86,10 @@ rdn.timeSeries.bars = function() {
                     .attr("class", "y axis")
                     .call(yAxis);
 
-        if (hasBrush) {
-          var gBrush = g.append("g").attr("class", "brush").call(brush);
-          gBrush.selectAll("rect").attr("height", _height);
-        }
+        var gBrush = g.append("g").attr("class", "brush").call(brush);
+        gBrush.selectAll("rect").attr("height", _height);     
       }
 
-      // Only redraw the brush if set externally.
-      if (_brushDirty) {
-        _brushDirty = false;
-        g.selectAll(".brush").call(brush);
-        //div.select(".title a").style("display", _brush.empty() ? "none" : null);
-        if (brush.empty()) {
-          g.selectAll("#clip-" + id + " rect")
-              .attr("x", 0)
-              .attr("width", _width);
-        } else {
-          var extent = brush.extent();
-          g.selectAll("#clip-" + id + " rect")
-              .attr("x", x(extent[0]))
-              .attr("width", x(extent[1]) - x(extent[0]));
-        }
-      }      
     });
 
     function barPath(groups) {
@@ -134,29 +112,18 @@ rdn.timeSeries.bars = function() {
   brush.on("brush.chart", function() {
     var g = d3.select(this.parentNode),
         extent = brush.extent();
-    if (_round) g.select(".brush")
-        .call(brush.extent(extent = extent.map(_round)))
-      .selectAll(".resize")
-        .style("display", null);
+
     g.select("#clip-" + id + " rect")
         .attr("x", x(extent[0]))
         .attr("width", x(extent[1]) - x(extent[0]));
-    //dimension.filterRange(extent);
-    filterSet = false; // to be tested in synchronous mode -- should prevent resetting 
-                   // default filter if manual brush took place meanwhile and
-                   // other graph is filtered
 
-    //$('#time-series-reset').addClass('active'); 
-    //$('#time-series-reset').css('visibility', 'visible'); 
+    _brushExtentSet = false;
   });
 
   brush.on("brushend.chart", function() {
     if (brush.empty()) {
       var div = d3.select(this.parentNode.parentNode.parentNode);
       div.select("#clip-" + id + " rect").attr("x", null).attr("width", "100%");
-      //dimension.filterAll();
-      //$('#time-series-reset').removeClass('active'); 
-      //$('#time-series-reset').css('visibility', 'hidden'); 
     }
   });
 
@@ -191,11 +158,6 @@ rdn.timeSeries.bars = function() {
     yAxis = _;
     return chart;
   };
-  /*chart.dimension = function(_) {
-    if (!arguments.length) return dimension;
-    dimension = _;
-    return chart;
-  };*/
   chart.group = function(_) {
     if (!arguments.length) return group;
     group = _;
@@ -206,22 +168,33 @@ rdn.timeSeries.bars = function() {
     prettyDate = _;
     return chart;
   };
-  chart.brush = function(_) {
+  chart.brushExtent = function(_) {
+    if (!arguments.length) return brush.extent();
+    brush.extent(_);
+    _brushExtentSet = true;
+    return chart;
+  };
+  chart.brushIsEmpty = function(_) {
+    if (!arguments.length) return brush.empty();
+    return chart;
+  };
+
+  /*chart.brush = function(_) {
     if (!arguments.length) return brush;
     brush = _;
     return chart;
-  };
-  chart.filter = function(_) {
+  };*/
+  /*chart.filter = function(_) {
     if (!arguments.length) return filter;
     filter = _;
     _filterSet = true;
     return chart;
-  };
-  chart.hasBrush = function(_) {
+  };*/
+  /*chart.hasBrush = function(_) {
     if (!arguments.length) return hasBrush;
     hasBrush = _;
     return chart;
-  };
+  };*/
   
   return d3.rebind(chart, brush, "on");
 };

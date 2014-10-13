@@ -14,16 +14,16 @@ var app = app || {};
     },
 
     render: function () {
-      var state = this.parent.model.get("reset");
+      var state = this.parent.model.get('reset');
       (state) ? this.on() : this.off();
     },
 
     on: function () {
-      this.$el.prop("disabled", false);
+      this.$el.prop('disabled', false);
     },
  
     off: function () {
-      this.$el.prop("disabled", true);
+      this.$el.prop('disabled', true);
     }
   });
 })(jQuery);

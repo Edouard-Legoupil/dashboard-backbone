@@ -8,7 +8,7 @@ var app = app || {};
 
   app.PresetsTimeView = Backbone.View.extend({
 
-    el: '#time-subview #preset',
+    el: '#time-subview #preset1',
 
     initialize: function (options) {
       this.parent = options.parent;

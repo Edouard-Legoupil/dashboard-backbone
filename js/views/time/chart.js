@@ -9,7 +9,6 @@ var app = app || {};
 
     initialize: function (options) {
       this.parent = options.parent;
-      this.listenTo(this.parent.model, 'change:brushExtent',  this.render);
 
       this.chart = rdn.timeSeries.bars()
         .id(1)
@@ -33,18 +32,26 @@ var app = app || {};
         .yAxis(d3.svg.axis()
                 .orient("left")
                 .ticks(4, ",.1s")
-                .tickValues([1,10,100,1000]))
-        .hasBrush(true);
+                .tickValues([1,10,100,1000]));
+        //.hasBrush(true);
 
         var that = this;
         this.chart.on('brush', function(e) { 
-          that.parent.model.set('brushExtent', that.chart.brush().extent());
+          that.parent.model.set({
+            'brushExtent': that.chart.brushExtent(),
+            'reset': true
+          });
         });  
         this.chart.on('brushend', function(e) { 
-          if (that.chart.brush().empty()) {
-            that.parent.model.set('brushExtent', null);
+          if (that.chart.brushIsEmpty()) {
+            that.parent.model.set({
+              'brushExtent': null,
+              'reset': false
+            });
           }          
         });  
+
+        Backbone.on('chart:sync', this.sync);
 
         this.render();
     },
@@ -53,6 +60,13 @@ var app = app || {};
       d3.select('#time-subview #chart').call(this.chart);
     },
 
+    setBrushExtent: function() {
+      this.chart.brushExtent([new Date(2011, 5, 1), new Date(2012, 1, 1)]);
+    },
+
+    sync: function() {
+      console.log('synced');
+    }
    
   });
 })(jQuery);
