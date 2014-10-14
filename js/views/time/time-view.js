@@ -11,13 +11,13 @@ var app = app || {};
 
     presets: {
       'preset1': [new Date(2011, 5, 1), new Date(2012, 1, 1)],
-      'preset2': [new Date(2011, 5, 1), new Date(2012, 1, 1)],
-      'preset3': [new Date(2011, 5, 1), new Date(2012, 1, 1)]
+      'preset2': [new Date(2011, 11, 1), new Date(2012, 5, 1)],
+      'preset3': [new Date(2012, 0, 1), new Date(2012, 3, 1)]
     },
 
     events: {
       'click #reset':  'cleared',
-      'click #presets': 'preset'
+      'click #presets button[id^="preset"]': 'preset'
      },
 
     initialize: function (options) {
@@ -26,9 +26,9 @@ var app = app || {};
       var presetsTimeView = new app.PresetsTimeView({parent: this});
       var chartTimeView = new app.ChartTimeView({parent: this});
 
+      // Listen to built in D3.js brush events
       var that = this;
       chartTimeView.chart.on('brush', function(e) { 
-          //console.log('brush event');
           that.model.set({
             'brushEmpty': chartTimeView.chart.brushIsEmpty(),
             'brushExtent': chartTimeView.chart.brushExtent(),
@@ -36,7 +36,6 @@ var app = app || {};
           });
       });  
       chartTimeView.chart.on('brushend', function(e) { 
-        //console.log('brushend');
         if (chartTimeView.chart.brushIsEmpty()) {
           that.model.set({
             'brushEmpty': chartTimeView.chart.brushIsEmpty(),
@@ -58,8 +57,13 @@ var app = app || {};
         'brushExtent': [new Date(1970, 0, 1), new Date(1970, 0, 1)] });
     },
 
-    preset: function () {
-      this.model.set({'reset': true, 'preset': true});
+    preset: function (event) {
+      var id = event.currentTarget.id;
+      this.model.set({
+        'reset': true,
+        'preset': true,
+        'brushEmpty': false,
+        'brushExtent': this.presets[id] });
     }
 
   });

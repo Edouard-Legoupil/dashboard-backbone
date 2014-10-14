@@ -35,9 +35,6 @@ var app = app || {};
                 .tickValues([1,10,100,1000]));
 
         Backbone.on('chart:sync', this.sync, this);
-
-        //this.listenTo(this.parent.model, 'change:preset',  this.setBrushExtent)
-
         this.render();
     },
 
@@ -46,8 +43,6 @@ var app = app || {};
     },
 
     sync: function() {
-      //console.log('chart is syncing');  
-      //console.log(this.parent.model.get('brushExtent'));
       this.chart.brushExtent(this.parent.model.get('brushExtent'));
       this.render();
     }

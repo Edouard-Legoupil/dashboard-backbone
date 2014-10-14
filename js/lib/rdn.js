@@ -94,6 +94,7 @@ rdn.timeSeries.bars = function() {
         _gBrush.call(brush.clear());
         div.select("#clip-" + id + " rect").attr("x", null).attr("width", "100%");
       } else {
+        _gBrush.call(brush);
         var extent = brush.extent();
         div.select("#clip-" + id + " rect")
           .attr("x", x(extent[0]))
