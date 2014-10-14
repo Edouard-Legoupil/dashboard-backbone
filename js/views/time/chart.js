@@ -33,25 +33,10 @@ var app = app || {};
                 .orient("left")
                 .ticks(4, ",.1s")
                 .tickValues([1,10,100,1000]));
-        //.hasBrush(true);
 
-        var that = this;
-        this.chart.on('brush', function(e) { 
-          that.parent.model.set({
-            'brushExtent': that.chart.brushExtent(),
-            'reset': true
-          });
-        });  
-        this.chart.on('brushend', function(e) { 
-          if (that.chart.brushIsEmpty()) {
-            that.parent.model.set({
-              'brushExtent': null,
-              'reset': false
-            });
-          }          
-        });  
+        Backbone.on('chart:sync', this.sync, this);
 
-        Backbone.on('chart:sync', this.sync);
+        //this.listenTo(this.parent.model, 'change:preset',  this.setBrushExtent)
 
         this.render();
     },
@@ -60,12 +45,11 @@ var app = app || {};
       d3.select('#time-subview #chart').call(this.chart);
     },
 
-    setBrushExtent: function() {
-      this.chart.brushExtent([new Date(2011, 5, 1), new Date(2012, 1, 1)]);
-    },
-
     sync: function() {
-      console.log('synced');
+      //console.log('chart is syncing');  
+      //console.log(this.parent.model.get('brushExtent'));
+      this.chart.brushExtent(this.parent.model.get('brushExtent'));
+      this.render();
     }
    
   });

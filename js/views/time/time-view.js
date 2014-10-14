@@ -3,7 +3,8 @@ var app = app || {};
 (function ($) {
   'use strict';
 
- 
+  // Implement the logic of the time dimension
+  // Set time-model.js attributes
   app.TimeView = Backbone.View.extend({
 
     el: '#time-subview',
@@ -24,13 +25,37 @@ var app = app || {};
       var resetTimeView = new app.ResetTimeView({parent: this});
       var presetsTimeView = new app.PresetsTimeView({parent: this});
       var chartTimeView = new app.ChartTimeView({parent: this});
+
+      var that = this;
+      chartTimeView.chart.on('brush', function(e) { 
+          //console.log('brush event');
+          that.model.set({
+            'brushEmpty': chartTimeView.chart.brushIsEmpty(),
+            'brushExtent': chartTimeView.chart.brushExtent(),
+            'reset': true
+          });
+      });  
+      chartTimeView.chart.on('brushend', function(e) { 
+        //console.log('brushend');
+        if (chartTimeView.chart.brushIsEmpty()) {
+          that.model.set({
+            'brushEmpty': chartTimeView.chart.brushIsEmpty(),
+            'brushExtent': chartTimeView.chart.brushExtent(),
+            'reset': false
+          });
+        }          
+      });  
     },
 
     render: function () {
     },
 
     cleared: function () {
-      this.model.set({'reset': false, 'preset': false, 'brushExtent': null});
+      this.model.set({
+        'reset': false,
+        'preset': false,
+        'brushEmpty': true,
+        'brushExtent': [new Date(1970, 0, 1), new Date(1970, 0, 1)] });
     },
 
     preset: function () {

@@ -29,6 +29,7 @@ rdn.timeSeries.bars = function() {
 
   var _width,
       _height,
+      _gBrush,
       _brushExtentSet = false;
 
   function chart(div) {
@@ -40,11 +41,7 @@ rdn.timeSeries.bars = function() {
       // Create the skeleton chart.
       if (g.empty()) init();
 
-      // If brush set programmatically
-      if (_brushExtentSet) {
-        brush.extent(brush.extent());
-        brush.event(d3.select("g.brush"));  // Trigger brush.on event
-      } 
+      updateClip();
 
       // Draw bars svg path
       g.selectAll(".bar").attr("d", barPath);
@@ -86,11 +83,23 @@ rdn.timeSeries.bars = function() {
                     .attr("class", "y axis")
                     .call(yAxis);
 
-        var gBrush = g.append("g").attr("class", "brush").call(brush);
-        gBrush.selectAll("rect").attr("height", _height);     
+        _gBrush = g.append("g").attr("class", "brush").call(brush);
+        _gBrush.selectAll("rect").attr("height", _height);     
       }
 
     });
+
+    function updateClip() {
+      if (brush.empty()) {
+        _gBrush.call(brush.clear());
+        div.select("#clip-" + id + " rect").attr("x", null).attr("width", "100%");
+      } else {
+        var extent = brush.extent();
+        div.select("#clip-" + id + " rect")
+          .attr("x", x(extent[0]))
+          .attr("width", x(extent[1]) - x(extent[0]));
+      }     
+    }
 
     function barPath(groups) {
       var path = [],
@@ -104,28 +113,6 @@ rdn.timeSeries.bars = function() {
       return path.join("");
     }
   }
-
-  brush.on("brushstart.chart", function() {
-      //d3.select("#time-series-preset").selectAll('dd').classed('active', false);
-  });
-
-  brush.on("brush.chart", function() {
-    var g = d3.select(this.parentNode),
-        extent = brush.extent();
-
-    g.select("#clip-" + id + " rect")
-        .attr("x", x(extent[0]))
-        .attr("width", x(extent[1]) - x(extent[0]));
-
-    _brushExtentSet = false;
-  });
-
-  brush.on("brushend.chart", function() {
-    if (brush.empty()) {
-      var div = d3.select(this.parentNode.parentNode.parentNode);
-      div.select("#clip-" + id + " rect").attr("x", null).attr("width", "100%");
-    }
-  });
 
   // Getters and Setters
   chart.id = function(_) {
@@ -178,23 +165,6 @@ rdn.timeSeries.bars = function() {
     if (!arguments.length) return brush.empty();
     return chart;
   };
-
-  /*chart.brush = function(_) {
-    if (!arguments.length) return brush;
-    brush = _;
-    return chart;
-  };*/
-  /*chart.filter = function(_) {
-    if (!arguments.length) return filter;
-    filter = _;
-    _filterSet = true;
-    return chart;
-  };*/
-  /*chart.hasBrush = function(_) {
-    if (!arguments.length) return hasBrush;
-    hasBrush = _;
-    return chart;
-  };*/
   
   return d3.rebind(chart, brush, "on");
 };
