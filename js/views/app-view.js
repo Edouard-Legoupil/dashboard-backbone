@@ -1,4 +1,3 @@
-/*global Backbone, jQuery, _, ENTER_KEY */
 var app = app || {};
 
 (function ($) {
@@ -19,9 +18,9 @@ var app = app || {};
     render: function () {
       var timeView = new app.TimeView({
         parent: this, 
-        model: new app.TimeModel}
+        model: this.model.timeModel}
       );
-      
+
       /*var histView = new app.HistView({
         parent: this,
         model: new app.TimeModel}
@@ -35,7 +34,7 @@ var app = app || {};
         model: new app.TimeModel}
       );*/
 
-      //return this; 
+      Backbone.history.start();
     }
 
   });

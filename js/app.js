@@ -6,7 +6,9 @@ var app = app || {};
 $(function () {
   'use strict';
 
-  // kick things off by creating the `App`
-  //new app.AppView({ model: app.AppModel });
-  new app.AppView();
+  app.appModel = new app.AppModel();
+
+  new app.AppView({model: app.appModel});
+
+  var router = new app.AppRouter({model: app.appModel});
 });

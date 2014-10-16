@@ -4,7 +4,7 @@ var app = app || {};
   'use strict';
 
   // Implement the logic of the time dimension
-  // Set time-model.js attributes
+  // via time-model.js attributes
   app.TimeView = Backbone.View.extend({
 
     el: '#time-subview',

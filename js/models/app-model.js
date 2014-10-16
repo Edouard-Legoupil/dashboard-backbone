@@ -9,6 +9,7 @@ var app = app || {};
         },
 
         initialize: function() {
+          this.timeModel = new app.TimeModel();
         }
     });
 })();

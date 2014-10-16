@@ -2,7 +2,8 @@ var app = app || {};
 
 (function ($) {
   'use strict';
-
+  
+  // In charge of UI rendering only
   app.ChartTimeView = Backbone.View.extend({
 
     el: '#time-subview #chart',
